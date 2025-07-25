@@ -1,8 +1,12 @@
 """
 import streamlit as st
+st.write("Debug: Streamlit imported successfully")
+
 from football_team_manager import FootballManager, Player, Position, PlayerStatus
+st.write("Debug: Imports from football_team_manager successful")
 
 # Initialize manager
+st.write("Debug: Initializing manager")
 if 'manager' not in st.session_state:
     manager = FootballManager()
     
