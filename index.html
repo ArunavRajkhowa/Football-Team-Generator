@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚽ Football Team Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #007bff, #6610f2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, #fd7e14, #e83e8c);
+            color: white;
+            box-shadow: 0 4px 15px rgba(253, 126, 20, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .player-editor {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .editor-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .player-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .player-table th {
+            background: linear-gradient(45deg, #495057, #6c757d);
+            color: white;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .player-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+        
+        .player-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .player-table tr:hover {
+            background: #e9ecef;
+        }
+        
+        .player-input {
+            width: 100%;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 8px 10px;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+        
+        .player-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+        
+        .player-select {
+            width: 100%;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 8px 10px;
+            font-size: 0.9em;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .number-input {
+            max-width: 80px;
+            text-align: center;
+        }
+        
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.2s ease;
+        }
+        
+        .remove-btn:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+        
+        .teams-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .team {
+            background: #fff;
+            border: 3px solid #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .team:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .team.team-a {
+            border-color: #dc3545;
+        }
+        
+        .team.team-b {
+            border-color: #007bff;
+        }
+        
+        .team-header {
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .team-a .team-header {
+            background: linear-gradient(45deg, #dc3545, #e74c3c);
+        }
+        
+        .team-b .team-header {
+            background: linear-gradient(45deg, #007bff, #3498db);
+        }
+        
+        .formation {
+            padding: 20px;
+        }
+        
+        .position-group {
+            margin-bottom: 15px;
+        }
+        
+        .position-title {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .player {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .player:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .player-name {
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 4px;
+        }
+        
+        .player-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+        
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        
+        .team-stats {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .avg-rating {
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+        
+        .status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .instructions {
+            background: linear-gradient(45deg, #fff3cd, #ffeaa7);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .instructions p {
+            color: #856404;
+            line-height: 1.6;
+        }
+        
+        .file-upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #007bff;
+            background: #f8f9fa;
+        }
+        
+        .file-upload-area.dragover {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        
+        @media (max-width: 768px) {
+            .teams-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .editor-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .quick-actions {
+                justify-content: center;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .player-table {
+                font-size: 0.85em;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚽ Football Team Generator</h1>
+            <p>Create balanced 7v7 teams with smart player management</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="instructions">
+                <h3>📋 Quick Start Guide</h3>
+                <p>
+                    <strong>1.</strong> Add players using the table below (or upload CSV) &nbsp;•&nbsp; 
+                    <strong>2.</strong> Set Name, Age, Position, Skill (1-10), Fitness (1-10) &nbsp;•&nbsp; 
+                    <strong>3.</strong> Click "Generate Teams" for balanced 7v7 teams!
+                </p>
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" id="generateBtn" disabled>
+                    🎲 Generate Teams
+                </button>
+                <button class="btn btn-secondary" id="addPlayerBtn">
+                    ➕ Add Player
+                </button>
+                <button class="btn btn-secondary" id="addSampleBtn">
+                    📋 Load Sample Data
+                </button>
+                <button class="btn btn-success" id="clearAllBtn">
+                    🗑️ Clear All
+                </button>
+            </div>
+            
+            <div class="player-editor">
+                <div class="editor-header">
+                    <div class="editor-title">👥 Player Management</div>
+                    <div class="quick-actions">
+                        <input type="file" id="csvFile" accept=".csv,.xlsx,.xls" style="display: none;" />
+                        <button class="btn btn-secondary" onclick="document.getElementById('csvFile').click()">
+                            📤 Upload CSV
+                        </button>
+                        <button class="btn btn-secondary" id="exportBtn">
+                            📥 Export CSV
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="file-upload-area" id="fileDropArea" style="display: none;">
+                    <p>📎 Drag & drop your CSV file here or click to browse</p>
+                </div>
+                
+                <table class="player-table" id="playerTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">👤 Player Name</th>
+                            <th style="width: 15%;">🎂 Age</th>
+                            <th style="width: 20%;">⚽ Position</th>
+                            <th style="width: 15%;">🎯 Skill (1-10)</th>
+                            <th style="width: 15%;">💪 Fitness (1-10)</th>
+                            <th style="width: 10%;">🗑️ Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="playerTableBody">
+                        <!-- Players will be added here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="status" class="status" style="display: none;"></div>
+            
+            <div class="teams-container" id="teamsContainer" style="display: none;">
+                <div class="team team-a">
+                    <div class="team-header">🔴 TEAM A</div>
+                    <div class="formation" id="teamA"></div>
+                    <div class="team-stats">
+                        <div class="avg-rating">Avg Rating: <span id="avgA">0.0</span></div>
+                    </div>
+                </div>
+                
+                <div class="team team-b">
+                    <div class="team-header">🔵 TEAM B</div>
+                    <div class="formation" id="teamB"></div>
+                    <div class="team-stats">
+                        <div class="avg-rating">Avg Rating: <span id="avgB">0.0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        let players = [];
+        let playerIdCounter = 1;
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+            addSamplePlayers();
+            updateGenerateButton();
+        });
+        
+        function initializeEventListeners() {
+            document.getElementById('generateBtn').addEventListener('click', generateTeams);
+            document.getElementById('addPlayerBtn').addEventListener('click', addNewPlayer);
+            document.getElementById('addSampleBtn').addEventListener('click', addSamplePlayers);
+            document.getElementById('clearAllBtn').addEventListener('click', clearAllPlayers);
+            document.getElementById('csvFile').addEventListener('change', handleFileUpload);
+            document.getElementById('exportBtn').addEventListener('click', exportToCSV);
+            
+            // File drop functionality
+            const dropArea = document.getElementById('fileDropArea');
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            dropArea.addEventListener('drop', handleDrop, false);
+        }
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        function highlight(e) {
+            document.getElementById('fileDropArea').classList.add('dragover');
+        }
+        
+        function unhighlight(e) {
+            document.getElementById('fileDropArea').classList.remove('dragover');
+        }
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        }
+        
+        function addNewPlayer() {
+            const player = {
+                id: playerIdCounter++,
+                name: '',
+                age: 25,
+                position: 'MID',
+                skill: 7,
+                fitness: 7
+            };
+            
+            players.push(player);
+            renderPlayerTable();
+            updateGenerateButton();
+            
+            // Focus on the new player name input
+            setTimeout(() => {
+                const newRow = document.querySelector(`#player-${player.id} input[name="name"]`);
+                if (newRow) newRow.focus();
+            }, 100);
+        }
+        
+        function removePlayer(playerId) {
+            players = players.filter(p => p.id !== playerId);
+            renderPlayerTable();
+            updateGenerateButton();
+        }
+        
+        function updatePlayer(playerId, field, value) {
+            const player = players.find(p => p.id === playerId);
+            if (player) {
+                if (field === 'age' || field === 'skill' || field === 'fitness') {
+                    player[field] = parseInt(value) || 0;
+                } else {
+                    player[field] = value;
+                }
+                updateGenerateButton();
+            }
+        }
+        
+        function renderPlayerTable() {
+            const tbody = document.getElementById('playerTableBody');
+            tbody.innerHTML = '';
+            
+            players.forEach(player => {
+                const row = document.createElement('tr');
+                row.id = `player-${player.id}`;
+                row.innerHTML = `
+                    <td>
+                        <input type="text" class="player-input" name="name" value="${player.name}" 
+                               placeholder="Enter player name"
+                               onchange="updatePlayer(${player.id}, 'name', this.value)">
+                    </td>
+                    <td>
+                        <input type="number" class="player-input number-input" name="age" 
+                               value="${player.age}" min="16" max="45"
+                               onchange="updatePlayer(${player.id}, 'age', this.value)">
+                    </td>
+                    <td>
+                        <select class="player-select" name="position" 
+                                onchange="updatePlayer(${player.id}, 'position', this.value)">
+                            <option value="GK" ${player.position === 'GK' ? 'selected' : ''}>🥅 Goalkeeper</option>
+                            <option value="DEF" ${player.position === 'DEF' ? 'selected' : ''}>🛡️ Defender</option>
+                            <option value="MID" ${player.position === 'MID' ? 'selected' : ''}>⚽ Midfielder</option>
+                            <option value="FWD" ${player.position === 'FWD' ? 'selected' : ''}>🎯 Forward</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" class="player-input number-input" name="skill" 
+                               value="${player.skill}" min="1" max="10"
+                               onchange="updatePlayer(${player.id}, 'skill', this.value)">
+                    </td>
+                    <td>
+                        <input type="number" class="player-input number-input" name="fitness" 
+                               value="${player.fitness}" min="1" max="10"
+                               onchange="updatePlayer(${player.id}, 'fitness', this.value)">
+                    </td>
+                    <td>
+                        <button class="remove-btn" onclick="removePlayer(${player.id})">
+                            ❌
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function addSamplePlayers() {
+            clearAllPlayers();
+            
+            const sampleData = [
+                {name: 'Alex Thompson', age: 26, position: 'GK', skill: 8, fitness: 9},
+                {name: 'Mark Johnson', age: 23, position: 'GK', skill: 6, fitness: 8},
+                {name: 'James Rodriguez', age: 28, position: 'DEF', skill: 7, fitness: 8},
+                {name: 'Connor Smith', age: 25, position: 'DEF', skill: 6, fitness: 7},
+                {name: 'Ryan Murphy', age: 24, position: 'DEF', skill: 7, fitness: 9},
+                {name: 'Daniel Clarke', age: 29, position: 'DEF', skill: 5, fitness: 7},
+                {name: 'Kevin White', age: 27, position: 'DEF', skill: 6, fitness: 8},
+                {name: 'Lucas Silva', age: 26, position: 'MID', skill: 9, fitness: 8},
+                {name: 'Michael Brown', age: 24, position: 'MID', skill: 8, fitness: 7},
+                {name: 'Kevin Davis', age: 27, position: 'MID', skill: 6, fitness: 8},
+                {name: 'Tom Wilson', age: 22, position: 'MID', skill: 7, fitness: 9},
+                {name: 'Chris Taylor', age: 25, position: 'MID', skill: 7, fitness: 7},
+                {name: 'Jake Foster', age: 23, position: 'MID', skill: 8, fitness: 8},
+                {name: 'Sergio Martinez', age: 23, position: 'FWD', skill: 9, fitness: 8},
+                {name: 'Jack Anderson', age: 28, position: 'FWD', skill: 7, fitness: 6},
+                {name: 'Andre Santos', age: 21, position: 'FWD', skill: 8, fitness: 9},
+                {name: 'Ben White', age: 26, position: 'FWD', skill: 6, fitness: 7},
+                {name: 'Sam Roberts', age: 24, position: 'FWD', skill: 7, fitness: 8}
+            ];
+            
+            sampleData.forEach(data => {
+                players.push({
+                    id: playerIdCounter++,
+                    ...data
+                });
+            });
+            
+            renderPlayerTable();
+            updateGenerateButton();
+            showStatus('Sample players loaded successfully! 📋', 'success');
+        }
+        
+        function clearAllPlayers() {
+            players = [];
+            playerIdCounter = 1;
+            renderPlayerTable();
+            updateGenerateButton();
+            document.getElementById('teamsContainer').style.display = 'none';
+        }
+        
+        function updateGenerateButton() {
+            const btn = document.getElementById('generateBtn');
+            const validPlayers = players.filter(p => p.name.trim() && p.age > 0 && p.skill > 0 && p.fitness > 0);
+            
+            if (validPlayers.length >= 14) {
+                btn.disabled = false;
+                btn.textContent = `🎲 Generate Teams (${validPlayers.length} players)`;
+            } else {
+                btn.disabled = true;
+                btn.textContent = `🎲 Need ${14 - validPlayers.length} more players`;
+            }
+        }
+        
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+        
+        function handleFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    if (file.name.endsWith('.csv')) {
+                        parseCsv(e.target.result);
+                    } else {
+                        parseExcel(e.target.result);
+                    }
+                } catch (error) {
+                    showStatus('Error reading file: ' + error.message, 'error');
+                }
+            };
+            
+            if (file.name.endsWith('.csv')) {
+                reader.readAsText(file);
+            } else {
+                reader.readAsArrayBuffer(file);
+            }
+        }
+        
+        function parseCsv(text) {
+            const lines = text.split('\n').filter(line => line.trim());
+            if (lines.length < 2) {
+                showStatus('CSV file must have at least a header row and one data row', 'error');
+                return;
+            }
+            
+            const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+            
+            clearAllPlayers();
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim());
+                if (values.length >= 3) {
+                    const player = createPlayerFromData(values, headers);
+                    if (player) {
+                        players.push({
+                            id: playerIdCounter++,
+                            ...player
+                        });
+                    }
+                }
+            }
+            
+            renderPlayerTable();
+            updateGenerateButton();
+            showStatus(`Loaded ${players.length} players from CSV successfully!`, 'success');
+        }
+        
+        function parseExcel(data) {
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+            
+            if (jsonData.length < 2) {
+                showStatus('Excel file must have at least a header row and one data row', 'error');
+                return;
+            }
+            
+            const headers = jsonData[0].map(h => String(h).toLowerCase());
+            
+            clearAllPlayers();
+            
+            for (let i = 1; i < jsonData.length; i++) {
+                const values = jsonData[i];
+                if (values && values.length >= 3) {
+                    const player = createPlayerFromData(values, headers);
+                    if (player) {
+                        players.push({
+                            id: playerIdCounter++,
+                            ...player
+                        });
+                    }
+                }
+            }
+            
+            renderPlayerTable();
+            updateGenerateButton();
+            showStatus(`Loaded ${players.length} players from Excel successfully!`, 'success');
+        }
+        
+        function createPlayerFromData(values, headers) {
+            const nameIdx = findColumnIndex(headers, ['name', 'player', 'player name']);
+            const ageIdx = findColumnIndex(headers, ['age']);
+            const positionIdx = findColumnIndex(headers, ['position', 'pos']);
+            const skillIdx = findColumnIndex(headers, ['skill', 'rating', 'skill level']);
+            const fitnessIdx = findColumnIndex(headers, ['fitness', 'stamina', 'condition']);
+            
+            const name = values[nameIdx] ? values[nameIdx].toString().trim() : '';
+            if (!name) return null;
+            
+            return {
+                name: name,
+                age: parseInt(values[ageIdx]) || 25,
+                position: normalizePosition(values[positionIdx] || 'MID'),
+                skill: Math.max(1, Math.min(10, parseInt(values[skillIdx]) || 7)),
+                fitness: Math.max(1, Math.min(10, parseInt(values[fitnessIdx]) || 7))
+            };
+        }
+        
+        function findColumnIndex(headers, possibleNames) {
+            for (let name of possibleNames) {
+                const index = headers.findIndex(h => h.includes(name));
+                if (index !== -1) return index;
+            }
+            return 0;
+        }
+        
+        function normalizePosition(pos) {
+            const p = pos.toString().toUpperCase();
+            if (p.includes('GK') || p.includes('GOAL')) return 'GK';
+            if (p.includes('DEF') || p.includes('BACK')) return 'DEF';
+            if (p.includes('MID') || p.includes('CENT')) return 'MID';
+            if (p.includes('FWD') || p.includes('FOR') || p.includes('ATT')) return 'FWD';
+            return 'MID';
+        }
+        
+        function exportToCSV() {
+            if (players.length === 0) {
+                showStatus('No players to export', 'error');
+                return;
+            }
+            
+            const csvContent = [
+                'Name,Age,Position,Skill,Fitness',
+                ...players.map(p => `${p.name},${p.age},${p.position},${p.skill},${p.fitness}`)
+            ].join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'football_players.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            showStatus('Player data exported successfully!', 'success');
+        }
+        
+        function calculatePlayerRating(player) {
+            const ageWeight = getAgeWeight(player.age);
+            const fitnessWeight = player.fitness / 10;
+            const skillWeight = player.skill / 10;
+            
+            const rating = (ageWeight * 0.2) + (fitnessWeight * 0.2) + (skillWeight * 0.6);
+            return Math.round(rating * 10 * 100) / 100;
+        }
+        
+        function getAgeWeight(age) {
+            if (age >= 24 && age <= 28) return 1.0;
+            if (age >= 22 && age <= 23) return 0.9;
+            if (age >= 29 && age <= 30) return 0.9;
+            if (age >= 20 && age <= 21) return 0.8;
+            if (age >= 31 && age <= 32) return 0.8;
+            if (age >= 18 && age <= 19) return 0.7;
+            if (age >= 33 && age <= 35) return 0.7;
+            return 0.6;
+        }
+        
+        function generateTeams() {
+            const validPlayers = players.filter(p => p.name.trim() && p.age > 0 && p.skill > 0 && p.fitness > 0);
+            
+            if (validPlayers.length < 14) {
+                showStatus('Need at least 14 valid players to generate teams!', 'error');
+                return;
+            }
+            
+            // Calculate ratings
+            validPlayers.forEach(player => {
+                player.rating = calculatePlayerRating(player);
+            });
+            
+            // Sort by rating
+            validPlayers.sort((a, b) => b.rating - a.rating);
+            
+            const teamA = [];
+            const teamB = [];
+            const formation = { GK: 1, DEF: 2, MID: 3, FWD: 1 };
+            
+            // Distribute by position
+            for (let position of ['GK', 'DEF', 'MID', 'FWD']) {
+                const positionPlayers = validPlayers.filter(p => 
+                    p.position === position && 
+                    !teamA.includes(p) && 
+                    !teamB.includes(p)
+                );
+                
+                const needed = formation[position];
+                
+                for (let i = 0; i < Math.min(needed * 2, positionPlayers.length); i++) {
+                    if (i % 2 === 0) {
+                        teamA.push(positionPlayers[i]);
+                    } else {
+                        teamB.push(positionPlayers[i]);
+                    }
+                }
+            }
+            
+            // Fill remaining spots
+            const remaining = validPlayers.filter(p => !teamA.includes(p) && !teamB.includes(p));
+            for (let i = 0; i < remaining.length && (teamA.length < 7 || teamB.length < 7); i++) {
+                if (teamA.length < 7 && (teamA.length <= teamB.length)) {
+                    teamA.push(remaining[i]);
+                } else if (teamB.length < 7) {
+                    teamB.push(remaining[i]);
+                }
+            }
+            
+            displayTeams(teamA, teamB);
+            showStatus(`Teams generated successfully! ${teamA.length + teamB.length} players assigned.`, 'success');
+        }
+        
+        function displayTeams(teamA, teamB) {
+            displayTeam(teamA, 'teamA', 'avgA');
+            displayTeam(teamB, 'teamB', 'avgB');
+            document.getElementById('teamsContainer').style.display = 'grid';
+            document.getElementById('teamsContainer').classList.add('fade-in');
+        }
+        
+        function displayTeam(team, containerId, avgId) {
+            const container = document.getElementById(containerId);
+            const formation = { GK: [], DEF: [], MID: [], FWD: [] };
+            
+            team.forEach(player => {
+                formation[player.position].push(player);
+            });
+            
+            let html = '';
+            const positionNames = {
+                GK: '🥅 Goalkeeper',
+                DEF: '🛡️ Defenders', 
+                MID: '⚽ Midfielders',
+                FWD: '🎯 Forwards'
+            };
+            
+            for (let [position, players] of Object.entries(formation)) {
+                if (players.length > 0) {
+                    html += `
+                        <div class="position-group">
+                            <div class="position-title">${positionNames[position]}</div>
+                            ${players.map(player => `
+                                <div class="player">
+                                    <div class="player-name">${player.name}</div>
+                                    <div class="player-stats">
+                                        <div class="stat">⭐ ${player.rating}</div>
+                                        <div class="stat">🎂 ${player.age}</div>
+                                        <div class="stat">💪 ${player.fitness}</div>
+                                        <div class="stat">🎯 ${player.skill}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+            }
+            
+            container.innerHTML = html;
+            
+            const avgRating = team.reduce((sum, p) => sum + p.rating, 0) / team.length;
+            document.getElementById(avgId).textContent = avgRating.toFixed(1);
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html> 
