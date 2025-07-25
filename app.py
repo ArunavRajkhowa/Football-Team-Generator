@@ -267,7 +267,7 @@ with col2:
 # Player Management Section
 st.header("👥 Player Management")
 
-tab1, tab2, tab3 = st.tabs(["➕ Add Player", "👀 View All Players", "📊 Team Stats"])
+tab1, tab2, tab3, tab4 = st.tabs(["➕ Add Player", "👀 View All Players", "📊 Team Stats", "⚽ Match Analysis"])
 
 with tab1:
     st.subheader("Add New Player")
@@ -381,6 +381,30 @@ with tab3:
         st.write(f"Lowest Rating: {min(ratings):.1f}")
     else:
         st.info("No players to display statistics for.")
+
+with tab4:
+    st.subheader("⚽ Match Analysis")
+    
+    st.markdown("""
+    <div style="text-align: center; padding: 3rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
+        <h2>🚧 Coming Soon! 🚧</h2>
+        <p style="font-size: 1.2em; margin: 1rem 0;">Stay tuned for advanced match analysis features!</p>
+        <div style="margin: 2rem 0;">
+            <p><strong>📊 What's coming:</strong></p>
+            <ul style="text-align: left; display: inline-block; margin: 1rem 0;">
+                <li>Match performance tracking</li>
+                <li>Player form analysis</li>
+                <li>Team chemistry insights</li>
+                <li>Historical match data</li>
+                <li>Performance trends</li>
+                <li>Advanced statistics</li>
+            </ul>
+        </div>
+        <p style="font-style: italic;">We're working hard to bring you the best football team management experience!</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.info("💡 **Tip:** This feature will allow you to track player performance over time, analyze team chemistry, and make data-driven decisions for team selection!")
 
 # Footer
 st.markdown("---")
