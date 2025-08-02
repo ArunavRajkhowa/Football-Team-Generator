@@ -133,7 +133,7 @@ st.markdown("""
     
     .quotes-container {
         display: flex;
-        animation: scrollQuotes 60s linear infinite;
+        animation: scrollQuotes 120s linear infinite;
         padding-left: 100%;
     }
     
@@ -345,53 +345,166 @@ if st.session_state.show_team_gen:
     st.markdown("---")
     st.markdown("## ⚡ Team Generator")
     
-    # Player input section
+    # Enhanced CSS for team generator
+    st.markdown("""
+    <style>
+        .player-input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .player-card-enhanced {
+            background: var(--surface-light);
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin: 0.3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .player-card-enhanced:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateX(3px);
+        }
+        .player-info {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .remove-player {
+            cursor: pointer;
+            color: #ef4444;
+            font-size: 1.2rem;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .formation-display {
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 150"><rect x="10" y="10" width="80" height="130" fill="none" stroke="%2314b8a6" stroke-width="0.5"/><circle cx="50" cy="75" r="15" fill="none" stroke="%2314b8a6" stroke-width="0.5"/><line x1="10" y1="75" x2="90" y2="75" stroke="%2314b8a6" stroke-width="0.5"/></svg>') no-repeat center;
+            background-size: contain;
+            min-height: 400px;
+            position: relative;
+            margin: 2rem 0;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Player input section with enhanced UI
     st.markdown("### Add Players")
     
-    with st.form("quick_team_gen", clear_on_submit=False):
-        col1, col2 = st.columns([3, 1])
-        
-        with col1:
-            player_name = st.text_input("Player Name", placeholder="Enter player name")
-        
-        with col2:
-            add_player = st.form_submit_button("Add Player", use_container_width=True)
-        
-        if add_player and player_name:
-            # Simple player addition
-            st.session_state.temp_players.append({
-                'name': player_name,
-                'position': 'Any'
-            })
-            st.success(f"Added {player_name}")
+    col1, col2, col3, col4 = st.columns([3, 1, 1, 1])
     
-    # Show current players
+    with col1:
+        player_name = st.text_input("Player Name", placeholder="Enter name and press Enter", key="player_name_input", label_visibility="collapsed")
+    
+    with col2:
+        age_bracket = st.selectbox("Age", ["20-25", "25-30", "30-35", "35-50", "50-60"], key="age_select", label_visibility="collapsed")
+    
+    with col3:
+        position = st.selectbox("Position", ["Any", "GK", "DEF", "MID", "FWD"], key="position_select", label_visibility="collapsed")
+    
+    with col4:
+        skill = st.selectbox("Skill", ["NA"] + list(range(1, 11)), key="skill_select", label_visibility="collapsed")
+    
+    # Add player on Enter key
+    if player_name and st.session_state.get('player_name_input'):
+        st.session_state.temp_players.append({
+            'name': player_name,
+            'age_bracket': age_bracket,
+            'position': position,
+            'skill': skill
+        })
+        st.success(f"Added {player_name}")
+        # Clear the input
+        st.session_state.player_name_input = ""
+        st.rerun()
+    
+    # Initialize with sample players if empty
+    if not st.session_state.temp_players:
+        st.session_state.temp_players = [
+            {'name': 'Arunav', 'age_bracket': '25-30', 'position': 'MID', 'skill': 8},
+            {'name': 'Rohit', 'age_bracket': '30-35', 'position': 'DEF', 'skill': 7},
+            {'name': 'Amit', 'age_bracket': '25-30', 'position': 'FWD', 'skill': 9},
+            {'name': 'Vikram', 'age_bracket': '20-25', 'position': 'GK', 'skill': 6},
+            {'name': 'Sandeep', 'age_bracket': '30-35', 'position': 'MID', 'skill': 7},
+            {'name': 'Karthik', 'age_bracket': '25-30', 'position': 'DEF', 'skill': 8},
+            {'name': 'Pranav', 'age_bracket': '20-25', 'position': 'FWD', 'skill': 8},
+            {'name': 'Deepak', 'age_bracket': '35-50', 'position': 'MID', 'skill': 6},
+            {'name': 'Nikhil', 'age_bracket': '25-30', 'position': 'DEF', 'skill': 7},
+            {'name': 'Arjun', 'age_bracket': '30-35', 'position': 'FWD', 'skill': 7}
+        ]
+    
+    # Show current players with remove option
     if st.session_state.temp_players:
         st.markdown("### Current Players")
         
-        cols = st.columns(4)
-        for i, player in enumerate(st.session_state.temp_players):
-            with cols[i % 4]:
-                st.markdown(f"""
-                <div class="player-line">
-                    <span>{player['name']}</span>
-                </div>
-                """, unsafe_allow_html=True)
+        # Create a container for players
+        player_container = st.container()
+        
+        with player_container:
+            for i, player in enumerate(st.session_state.temp_players):
+                col1, col2 = st.columns([10, 1])
+                
+                with col1:
+                    player_display = f"**{player['name']}** | {player['age_bracket']} | {player['position']}"
+                    if player['skill'] != 'NA':
+                        player_display += f" | Skill: {player['skill']}"
+                    st.markdown(player_display)
+                
+                with col2:
+                    if st.button("❌", key=f"remove_{i}", help=f"Remove {player['name']}"):
+                        st.session_state.temp_players.pop(i)
+                        st.rerun()
         
         st.markdown(f"**Total Players:** {len(st.session_state.temp_players)}")
         
         # Generate teams button
         if len(st.session_state.temp_players) >= 10:
-            if st.button("🎯 Generate Balanced Teams", type="primary", use_container_width=True):
-                # Simple team split
+            if st.button("⚽ Generate Balanced Teams", type="primary", use_container_width=True):
+                # Enhanced team generation with position consideration
                 players = st.session_state.temp_players.copy()
-                random.shuffle(players)
                 
-                mid_point = len(players) // 2
-                team_a = players[:mid_point]
-                team_b = players[mid_point:]
+                # Separate by position
+                gks = [p for p in players if p['position'] == 'GK']
+                defs = [p for p in players if p['position'] == 'DEF']
+                mids = [p for p in players if p['position'] == 'MID']
+                fwds = [p for p in players if p['position'] == 'FWD']
+                others = [p for p in players if p['position'] == 'Any']
                 
-                # Display teams
+                # Shuffle each position group
+                for group in [gks, defs, mids, fwds, others]:
+                    random.shuffle(group)
+                
+                # Distribute players
+                team_a, team_b = [], []
+                
+                # Distribute goalkeepers
+                for i, gk in enumerate(gks):
+                    if i % 2 == 0:
+                        team_a.append(gk)
+                    else:
+                        team_b.append(gk)
+                
+                # Distribute other positions
+                for group in [defs, mids, fwds]:
+                    for i, player in enumerate(group):
+                        if i % 2 == 0:
+                            team_a.append(player)
+                        else:
+                            team_b.append(player)
+                
+                # Distribute 'Any' position players
+                for i, player in enumerate(others):
+                    if len(team_a) <= len(team_b):
+                        team_a.append(player)
+                    else:
+                        team_b.append(player)
+                
+                # Display teams with formation
                 st.markdown("### Generated Teams")
                 
                 col1, col2 = st.columns(2)
@@ -403,8 +516,16 @@ if st.session_state.show_team_gen:
                     </div>
                     """, unsafe_allow_html=True)
                     
+                    # Group by position for display
+                    red_formation = {"GK": [], "DEF": [], "MID": [], "FWD": [], "Any": []}
                     for player in team_a:
-                        st.markdown(f"• {player['name']}")
+                        red_formation[player['position']].append(player)
+                    
+                    for pos in ["GK", "DEF", "MID", "FWD", "Any"]:
+                        if red_formation[pos]:
+                            st.markdown(f"**{pos}:**")
+                            for player in red_formation[pos]:
+                                st.markdown(f"• {player['name']} ({player['age_bracket']})")
                 
                 with col2:
                     st.markdown("""
@@ -413,20 +534,41 @@ if st.session_state.show_team_gen:
                     </div>
                     """, unsafe_allow_html=True)
                     
+                    # Group by position for display
+                    blue_formation = {"GK": [], "DEF": [], "MID": [], "FWD": [], "Any": []}
                     for player in team_b:
-                        st.markdown(f"• {player['name']}")
+                        blue_formation[player['position']].append(player)
+                    
+                    for pos in ["GK", "DEF", "MID", "FWD", "Any"]:
+                        if blue_formation[pos]:
+                            st.markdown(f"**{pos}:**")
+                            for player in blue_formation[pos]:
+                                st.markdown(f"• {player['name']} ({player['age_bracket']})")
+                
+                # Show formation visualization
+                st.markdown("### Formation View")
+                formation_col1, formation_col2 = st.columns(2)
+                
+                with formation_col1:
+                    st.markdown("**Team Red Formation**")
+                    st.info(f"GK: {len(red_formation['GK'])} | DEF: {len(red_formation['DEF'])} | MID: {len(red_formation['MID'])} | FWD: {len(red_formation['FWD'])}")
+                
+                with formation_col2:
+                    st.markdown("**Team Blue Formation**")
+                    st.info(f"GK: {len(blue_formation['GK'])} | DEF: {len(blue_formation['DEF'])} | MID: {len(blue_formation['MID'])} | FWD: {len(blue_formation['FWD'])}")
                 
                 # Save match option
                 if st.button("💾 Save This Match", use_container_width=True):
                     match_data = {
                         'date': datetime.now().strftime("%Y-%m-%d"),
-                        'team_a': [p['name'] for p in team_a],
-                        'team_b': [p['name'] for p in team_b],
+                        'team_a': team_a,
+                        'team_b': team_b,
                         'score': "0-0"
                     }
                     st.session_state.match_history.append(match_data)
                     st.success("Match saved!")
-                    st.session_state.temp_players = []
+        else:
+            st.warning(f"Need at least 10 players to generate teams. Currently have {len(st.session_state.temp_players)}")
         
         # Clear players button
         if st.button("🗑️ Clear All Players", use_container_width=True):
@@ -440,21 +582,32 @@ if st.session_state.show_matches:
     
     if st.session_state.match_history:
         for i, match in enumerate(reversed(st.session_state.match_history)):
-            with st.expander(f"Match {len(st.session_state.match_history) - i} - {match['date']}"):
+            with st.expander(f"Match {len(st.session_state.match_history) - i} - {match['date']} | Score: {match.get('score', '0-0')}"):
                 col1, col2, col3 = st.columns([2, 1, 2])
                 
                 with col1:
-                    st.markdown("**Team Red:**")
+                    st.markdown("**🔴 Team Red:**")
                     for player in match['team_a']:
-                        st.markdown(f"• {player}")
+                        if isinstance(player, dict):
+                            st.markdown(f"• {player['name']} ({player['position']})")
+                        else:
+                            st.markdown(f"• {player}")
                 
                 with col2:
-                    st.markdown(f"### {match['score']}")
+                    st.markdown(f"### {match.get('score', '0-0')}")
+                    # Option to update score
+                    new_score = st.text_input("Update Score", value=match.get('score', '0-0'), key=f"score_{i}")
+                    if new_score != match.get('score', '0-0'):
+                        match['score'] = new_score
+                        st.success("Score updated!")
                 
                 with col3:
-                    st.markdown("**Team Blue:**")
+                    st.markdown("**🔵 Team Blue:**")
                     for player in match['team_b']:
-                        st.markdown(f"• {player}")
+                        if isinstance(player, dict):
+                            st.markdown(f"• {player['name']} ({player['position']})")
+                        else:
+                            st.markdown(f"• {player}")
     else:
         st.info("No matches recorded yet. Generate teams and save matches to see them here!")
 
@@ -463,7 +616,7 @@ if st.session_state.show_learn:
     st.markdown("---")
     st.markdown("## 📚 Learn Football")
     
-    from football_learning import (
+    from football_learning_engaging import (
         GOALKEEPER_CONTENT, DEFENDER_CONTENT, MIDFIELDER_CONTENT,
         FORWARD_CONTENT, TACTICS_CONTENT, FITNESS_CONTENT, PHILOSOPHY_CONTENT
     )
