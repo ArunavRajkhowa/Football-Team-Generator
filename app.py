@@ -133,7 +133,7 @@ st.markdown("""
     
     .quotes-container {
         display: flex;
-        animation: scrollQuotes 120s linear infinite;
+        animation: scrollQuotes 300s linear infinite;
         padding-left: 100%;
     }
     
@@ -260,6 +260,130 @@ st.markdown("""
     
     ::-webkit-scrollbar-thumb:hover {
         background: var(--accent-teal);
+    }
+    
+    /* Football Field Styling */
+    .football-field {
+        background: linear-gradient(90deg, #2d5016 0%, #4a7c22 50%, #2d5016 100%);
+        border: 3px solid #ffffff;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 10px 0;
+        position: relative;
+        min-height: 400px;
+        display: flex;
+        background-image: 
+            linear-gradient(0deg, transparent 49%, rgba(255,255,255,0.3) 50%, transparent 51%),
+            linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.3) 50%, transparent 51%);
+        background-size: 40px 40px;
+    }
+    
+    .field-half {
+        width: 50%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        padding: 20px 10px;
+    }
+    
+    .team-name {
+        background: rgba(255,255,255,0.9);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    
+    .team-red .team-name {
+        background: linear-gradient(135deg, #ff4444, #cc0000);
+        color: white;
+    }
+    
+    .team-blue .team-name {
+        background: linear-gradient(135deg, #4444ff, #0000cc);
+        color: white;
+    }
+    
+    .player-icon {
+        background: #ffffff;
+        border: 2px solid #333;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
+        margin: 5px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        text-align: center;
+        line-height: 1.1;
+    }
+    
+    .player-icon:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    }
+    
+    .player-gk {
+        background: linear-gradient(135deg, #ffff00, #e6e600);
+        border-color: #b3b300;
+        color: #333;
+    }
+    
+    .player-def {
+        background: linear-gradient(135deg, #4169e1, #1e3a8a);
+        color: white;
+        border-color: #1e3a8a;
+    }
+    
+    .player-mid {
+        background: linear-gradient(135deg, #32cd32, #228b22);
+        color: white;
+        border-color: #228b22;
+    }
+    
+    .player-fwd {
+        background: linear-gradient(135deg, #ff6347, #dc143c);
+        color: white;
+        border-color: #dc143c;
+    }
+    
+    .player-any {
+        background: linear-gradient(135deg, #9370db, #663399);
+        color: white;
+        border-color: #663399;
+    }
+    
+    .formation-line {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 10px 0;
+        gap: 10px;
+    }
+    
+    .substitute-area {
+        background: rgba(255,255,255,0.1);
+        border: 2px dashed rgba(255,255,255,0.5);
+        border-radius: 8px;
+        padding: 15px;
+        margin: 15px 0;
+        text-align: center;
+    }
+    
+    .substitute-title {
+        color: #ffffff;
+        font-weight: bold;
+        margin-bottom: 10px;
+        font-size: 16px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -395,20 +519,27 @@ if st.session_state.show_team_gen:
     
     # Player input section with enhanced UI
     st.markdown("### Add Players")
+    st.markdown('<p style="color: #7fafdf; font-size: 14px; margin-bottom: 15px;">Fill in player details below and press Enter to add them to your team</p>', unsafe_allow_html=True)
     
     col1, col2, col3, col4 = st.columns([3, 1, 1, 1])
     
     with col1:
-        player_name = st.text_input("Player Name", placeholder="Enter name and press Enter", key="player_name_input", label_visibility="collapsed")
+        st.markdown('<p style="color: #a0a0a0; font-size: 12px; margin-bottom: 2px;">👤 Player Name</p>', unsafe_allow_html=True)
+        player_name = st.text_input("Player Name", placeholder="Enter player's full name", key="player_name_input", label_visibility="collapsed")
     
     with col2:
-        age_bracket = st.selectbox("Age", ["20-25", "25-30", "30-35", "35-50", "50-60"], key="age_select", label_visibility="collapsed")
+        st.markdown('<p style="color: #a0a0a0; font-size: 12px; margin-bottom: 2px;">🎂 Age Range</p>', unsafe_allow_html=True)
+        age_bracket = st.selectbox("Age", ["20-25", "25-30", "30-35", "35-50", "50-60"], key="age_select", label_visibility="collapsed", help="Select the player's age bracket")
     
     with col3:
-        position = st.selectbox("Position", ["Any", "GK", "DEF", "MID", "FWD"], key="position_select", label_visibility="collapsed")
+        st.markdown('<p style="color: #a0a0a0; font-size: 12px; margin-bottom: 2px;">⚽ Position</p>', unsafe_allow_html=True)
+        position = st.selectbox("Position", ["Any", "GK", "DEF", "MID", "FWD"], key="position_select", label_visibility="collapsed", 
+                               help="GK=Goalkeeper, DEF=Defender, MID=Midfielder, FWD=Forward")
     
     with col4:
-        skill = st.selectbox("Skill", ["NA"] + list(range(1, 11)), key="skill_select", label_visibility="collapsed")
+        st.markdown('<p style="color: #a0a0a0; font-size: 12px; margin-bottom: 2px;">⭐ Skill Level</p>', unsafe_allow_html=True)
+        skill = st.selectbox("Skill", ["NA"] + list(range(1, 11)), key="skill_select", label_visibility="collapsed",
+                           help="Rate player skill from 1 (beginner) to 10 (professional), or NA if unknown")
     
     # Add player on Enter key
     if player_name and st.session_state.get('player_name_input'):
@@ -423,19 +554,27 @@ if st.session_state.show_team_gen:
         st.session_state.player_name_input = ""
         st.rerun()
     
-    # Initialize with sample players if empty
+    # Initialize with sample players if empty - St Xavier's School Aug 2nd'25 Teams
     if not st.session_state.temp_players:
         st.session_state.temp_players = [
-            {'name': 'Arunav', 'age_bracket': '25-30', 'position': 'MID', 'skill': 8},
-            {'name': 'Rohit', 'age_bracket': '30-35', 'position': 'DEF', 'skill': 7},
-            {'name': 'Amit', 'age_bracket': '25-30', 'position': 'FWD', 'skill': 9},
-            {'name': 'Vikram', 'age_bracket': '20-25', 'position': 'GK', 'skill': 6},
-            {'name': 'Sandeep', 'age_bracket': '30-35', 'position': 'MID', 'skill': 7},
-            {'name': 'Karthik', 'age_bracket': '25-30', 'position': 'DEF', 'skill': 8},
-            {'name': 'Pranav', 'age_bracket': '20-25', 'position': 'FWD', 'skill': 8},
-            {'name': 'Deepak', 'age_bracket': '35-50', 'position': 'MID', 'skill': 6},
-            {'name': 'Nikhil', 'age_bracket': '25-30', 'position': 'DEF', 'skill': 7},
-            {'name': 'Arjun', 'age_bracket': '30-35', 'position': 'FWD', 'skill': 7}
+            # Team A Green Players
+            {'name': 'Subhram', 'age_bracket': '20-25', 'position': 'GK', 'skill': 7},
+            {'name': 'Chandan', 'age_bracket': '20-25', 'position': 'DEF', 'skill': 8},
+            {'name': 'Deepankar B', 'age_bracket': '20-25', 'position': 'DEF', 'skill': 7},
+            {'name': 'Dhun', 'age_bracket': '20-25', 'position': 'MID', 'skill': 8},
+            {'name': 'Paldeep', 'age_bracket': '20-25', 'position': 'MID', 'skill': 7},
+            {'name': 'Nikhil (Deepankar Friend)', 'age_bracket': '20-25', 'position': 'FWD', 'skill': 7},
+            {'name': 'Shovans', 'age_bracket': '20-25', 'position': 'FWD', 'skill': 8},
+            
+            # Team B Orange Players
+            {'name': 'Arunav', 'age_bracket': '20-25', 'position': 'GK', 'skill': 8},
+            {'name': 'Priyam', 'age_bracket': '20-25', 'position': 'DEF', 'skill': 7},
+            {'name': 'Gautam', 'age_bracket': '20-25', 'position': 'DEF', 'skill': 8},
+            {'name': 'Dheeraj', 'age_bracket': '20-25', 'position': 'MID', 'skill': 7},
+            {'name': 'Randeep', 'age_bracket': '20-25', 'position': 'MID', 'skill': 8},
+            {'name': 'Abhishek', 'age_bracket': '20-25', 'position': 'FWD', 'skill': 7},
+            {'name': 'Pallab', 'age_bracket': '20-25', 'position': 'FWD', 'skill': 8},
+            {'name': 'Suraj', 'age_bracket': '20-25', 'position': 'Any', 'skill': 7}
         ]
     
     # Show current players with remove option
@@ -465,10 +604,11 @@ if st.session_state.show_team_gen:
         st.markdown(f"**Total Players:** {len(st.session_state.temp_players)}")
         
         # Generate teams button
-        if len(st.session_state.temp_players) >= 10:
-            if st.button("⚽ Generate Balanced Teams", type="primary", use_container_width=True):
-                # Enhanced team generation with position consideration
+        if len(st.session_state.temp_players) >= 14:
+            if st.button("⚽ Generate 7v7 Teams", type="primary", use_container_width=True):
+                # Enhanced 7v7 team generation with position consideration
                 players = st.session_state.temp_players.copy()
+                random.shuffle(players)
                 
                 # Separate by position
                 gks = [p for p in players if p['position'] == 'GK']
@@ -481,83 +621,131 @@ if st.session_state.show_team_gen:
                 for group in [gks, defs, mids, fwds, others]:
                     random.shuffle(group)
                 
-                # Distribute players
+                # Distribute players for 7v7 (1 GK + 6 outfield players each)
                 team_a, team_b = [], []
+                substitutes = []
                 
-                # Distribute goalkeepers
-                for i, gk in enumerate(gks):
+                # Distribute goalkeepers (1 per team)
+                for i, gk in enumerate(gks[:2]):  # Take first 2 GKs
                     if i % 2 == 0:
                         team_a.append(gk)
                     else:
                         team_b.append(gk)
                 
-                # Distribute other positions
-                for group in [defs, mids, fwds]:
-                    for i, player in enumerate(group):
-                        if i % 2 == 0:
-                            team_a.append(player)
-                        else:
-                            team_b.append(player)
+                # Combine outfield players
+                outfield_players = defs + mids + fwds + others
+                random.shuffle(outfield_players)
                 
-                # Distribute 'Any' position players
-                for i, player in enumerate(others):
-                    if len(team_a) <= len(team_b):
+                # Distribute outfield players (6 per team for 7v7)
+                for i, player in enumerate(outfield_players[:12]):  # Take first 12 outfield players
+                    if i % 2 == 0:
                         team_a.append(player)
                     else:
                         team_b.append(player)
                 
-                # Display teams with formation
-                st.markdown("### Generated Teams")
+                # Remaining players become substitutes
+                substitutes = gks[2:] + outfield_players[12:]
                 
-                col1, col2 = st.columns(2)
+                # Display teams with visual football field
+                st.markdown("### 🏟️ 7v7 Football Field Formation")
                 
-                with col1:
-                    st.markdown("""
-                    <div class="team-display">
-                        <h3 class="team-header">🔴 TEAM RED</h3>
+                def create_player_icon(player, team_side=""):
+                    """Create HTML for a player icon"""
+                    pos_class = f"player-{player['position'].lower()}"
+                    name_short = player['name'][:8] if len(player['name']) > 8 else player['name']
+                    skill_indicator = f"⭐{player['skill']}" if player.get('skill', 'NA') != 'NA' else ""
+                    
+                    return f"""
+                    <div class="player-icon {pos_class}" title="{player['name']} - {player['position']} - Age: {player.get('age_bracket', 'Unknown')} - Skill: {player.get('skill', 'NA')}">
+                        <div style="font-size: 8px; line-height: 1.1;">
+                            {name_short}<br/>
+                            <span style="font-size: 6px;">{skill_indicator}</span>
+                        </div>
                     </div>
+                    """
+                
+                def organize_7v7_formation(team_players):
+                    """Organize players into 7v7 formation (1-2-3-1 or 1-2-2-2)"""
+                    formation = {"GK": [], "DEF": [], "MID": [], "FWD": [], "Any": []}
+                    
+                    for player in team_players:
+                        formation[player['position']].append(player)
+                    
+                    # Arrange in formation lines for visual display
+                    lines = []
+                    
+                    # Goalkeeper line
+                    if formation["GK"]:
+                        lines.append(formation["GK"][:1])  # Max 1 GK
+                    
+                    # Defense line (2 players)
+                    defense_line = formation["DEF"][:2]
+                    if len(defense_line) < 2 and formation["Any"]:
+                        defense_line.extend(formation["Any"][:2-len(defense_line)])
+                        formation["Any"] = formation["Any"][2-len(defense_line):]
+                    lines.append(defense_line)
+                    
+                    # Midfield line (2-3 players)
+                    mid_line = formation["MID"][:3]
+                    if len(mid_line) < 2 and formation["Any"]:
+                        mid_line.extend(formation["Any"][:2-len(mid_line)])
+                        formation["Any"] = formation["Any"][2-len(mid_line):]
+                    lines.append(mid_line)
+                    
+                    # Forward line (1-2 players)
+                    fwd_line = formation["FWD"][:2]
+                    if len(fwd_line) < 1 and formation["Any"]:
+                        fwd_line.extend(formation["Any"][:1])
+                        formation["Any"] = formation["Any"][1:]
+                    lines.append(fwd_line)
+                    
+                    return lines
+                
+                # Create the visual football field
+                st.markdown(f"""
+                <div class="football-field">
+                    <div class="field-half team-red">
+                        <div class="team-name">🔴 TEAM RED</div>
+                """, unsafe_allow_html=True)
+                
+                # Team A formation
+                team_a_formation = organize_7v7_formation(team_a)
+                for line in reversed(team_a_formation):  # Reverse to show from front to back
+                    if line:
+                        st.markdown('<div class="formation-line">', unsafe_allow_html=True)
+                        for player in line:
+                            st.markdown(create_player_icon(player, "red"), unsafe_allow_html=True)
+                        st.markdown('</div>', unsafe_allow_html=True)
+                
+                st.markdown("""
+                    </div>
+                    <div class="field-half team-blue">
+                        <div class="team-name">🔵 TEAM BLUE</div>
+                """, unsafe_allow_html=True)
+                
+                # Team B formation
+                team_b_formation = organize_7v7_formation(team_b)
+                for line in team_b_formation:  # Normal order for opposing team
+                    if line:
+                        st.markdown('<div class="formation-line">', unsafe_allow_html=True)
+                        for player in line:
+                            st.markdown(create_player_icon(player, "blue"), unsafe_allow_html=True)
+                        st.markdown('</div>', unsafe_allow_html=True)
+                
+                st.markdown('</div></div>', unsafe_allow_html=True)
+                
+                # Show substitutes if any
+                if substitutes:
+                    st.markdown(f"""
+                    <div class="substitute-area">
+                        <div class="substitute-title">⚽ Substitutes ({len(substitutes)} players)</div>
+                        <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
                     """, unsafe_allow_html=True)
                     
-                    # Group by position for display
-                    red_formation = {"GK": [], "DEF": [], "MID": [], "FWD": [], "Any": []}
-                    for player in team_a:
-                        red_formation[player['position']].append(player)
+                    for sub in substitutes:
+                        st.markdown(create_player_icon(sub), unsafe_allow_html=True)
                     
-                    for pos in ["GK", "DEF", "MID", "FWD", "Any"]:
-                        if red_formation[pos]:
-                            st.markdown(f"**{pos}:**")
-                            for player in red_formation[pos]:
-                                st.markdown(f"• {player['name']} ({player['age_bracket']})")
-                
-                with col2:
-                    st.markdown("""
-                    <div class="team-display">
-                        <h3 class="team-header">🔵 TEAM BLUE</h3>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    # Group by position for display
-                    blue_formation = {"GK": [], "DEF": [], "MID": [], "FWD": [], "Any": []}
-                    for player in team_b:
-                        blue_formation[player['position']].append(player)
-                    
-                    for pos in ["GK", "DEF", "MID", "FWD", "Any"]:
-                        if blue_formation[pos]:
-                            st.markdown(f"**{pos}:**")
-                            for player in blue_formation[pos]:
-                                st.markdown(f"• {player['name']} ({player['age_bracket']})")
-                
-                # Show formation visualization
-                st.markdown("### Formation View")
-                formation_col1, formation_col2 = st.columns(2)
-                
-                with formation_col1:
-                    st.markdown("**Team Red Formation**")
-                    st.info(f"GK: {len(red_formation['GK'])} | DEF: {len(red_formation['DEF'])} | MID: {len(red_formation['MID'])} | FWD: {len(red_formation['FWD'])}")
-                
-                with formation_col2:
-                    st.markdown("**Team Blue Formation**")
-                    st.info(f"GK: {len(blue_formation['GK'])} | DEF: {len(blue_formation['DEF'])} | MID: {len(blue_formation['MID'])} | FWD: {len(blue_formation['FWD'])}")
+                    st.markdown('</div></div>', unsafe_allow_html=True)
                 
                 # Save match option
                 if st.button("💾 Save This Match", use_container_width=True):
@@ -570,7 +758,7 @@ if st.session_state.show_team_gen:
                     st.session_state.match_history.append(match_data)
                     st.success("Match saved!")
         else:
-            st.warning(f"Need at least 10 players to generate teams. Currently have {len(st.session_state.temp_players)}")
+            st.warning(f"Need at least 14 players to generate 7v7 teams. Currently have {len(st.session_state.temp_players)}")
         
         # Clear players button
         if st.button("🗑️ Clear All Players", use_container_width=True):
@@ -616,39 +804,230 @@ if st.session_state.show_matches:
 # Learn Football Section
 if st.session_state.show_learn:
     st.markdown("---")
-    st.markdown("## 📚 Learn Football")
+    st.markdown("## 📚 Complete Football Guide")
     
     from football_learning_engaging import (
         GOALKEEPER_CONTENT, DEFENDER_CONTENT, MIDFIELDER_CONTENT,
         FORWARD_CONTENT, TACTICS_CONTENT, FITNESS_CONTENT, PHILOSOPHY_CONTENT
     )
     
-    # Position-specific training
-    st.markdown("### Position Masterclass")
+    # Main format selection
+    st.markdown('<div style="text-align: center; margin: 20px 0;"><h3>Choose Your Football Format</h3></div>', unsafe_allow_html=True)
     
-    position_tabs = st.tabs(["🥅 Goalkeeper", "🛡️ Defender", "⚽ Midfielder", "⚡ Forward", "📋 Tactics"])
+    format_col1, format_col2 = st.columns(2)
     
-    with position_tabs[0]:
-        st.markdown(GOALKEEPER_CONTENT)
+    with format_col1:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #1e40af, #3b82f6); padding: 25px; border-radius: 15px; text-align: center; margin: 10px;">
+            <h2 style="color: white; margin: 0;">⚽ 11v11 Football</h2>
+            <p style="color: #e2e8f0; margin: 10px 0 0 0;">Traditional full-field football with 11 players per team</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        if st.button("🏟️ Learn 11v11 Football", use_container_width=True, type="primary"):
+            st.session_state.selected_format = "11v11"
     
-    with position_tabs[1]:
-        st.markdown(DEFENDER_CONTENT)
+    with format_col2:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #059669, #10b981); padding: 25px; border-radius: 15px; text-align: center; margin: 10px;">
+            <h2 style="color: white; margin: 0;">🏃 7v7 Turf Football</h2>
+            <p style="color: #e2e8f0; margin: 10px 0 0 0;">Fast-paced smaller format perfect for turf fields</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        if st.button("🌱 Learn 7v7 Football", use_container_width=True, type="secondary"):
+            st.session_state.selected_format = "7v7"
     
-    with position_tabs[2]:
-        st.markdown(MIDFIELDER_CONTENT)
+    # Initialize selected format if not set
+    if 'selected_format' not in st.session_state:
+        st.session_state.selected_format = "7v7"  # Default to 7v7 since that's what we're focusing on
     
-    with position_tabs[3]:
-        st.markdown(FORWARD_CONTENT)
+    st.markdown("---")
     
-    with position_tabs[4]:
-        st.markdown(TACTICS_CONTENT)
+    # Display content based on selected format
+    if st.session_state.selected_format == "11v11":
+        st.markdown("## 🏟️ 11v11 Traditional Football Guide")
+        st.markdown("""
+        <div style="background: rgba(30, 64, 175, 0.1); padding: 20px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #3b82f6;">
+            <h4 style="color: #3b82f6; margin-top: 0;">Traditional 11v11 Formation</h4>
+            <p><strong>Team Size:</strong> 11 players (1 GK + 10 outfield)</p>
+            <p><strong>Field Size:</strong> 100-130 yards long, 50-100 yards wide</p>
+            <p><strong>Popular Formations:</strong> 4-4-2, 4-3-3, 3-5-2, 4-2-3-1</p>
+            <p><strong>Match Duration:</strong> 90 minutes (2x 45 min halves)</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Position-specific training for 11v11
+        position_tabs = st.tabs(["🥅 Goalkeeper", "🛡️ Defender", "⚽ Midfielder", "⚡ Forward", "📋 11v11 Tactics"])
+        
+        with position_tabs[0]:
+            st.markdown(GOALKEEPER_CONTENT)
+        
+        with position_tabs[1]:
+            st.markdown(DEFENDER_CONTENT)
+        
+        with position_tabs[2]:
+            st.markdown(MIDFIELDER_CONTENT)
+        
+        with position_tabs[3]:
+            st.markdown(FORWARD_CONTENT)
+        
+        with position_tabs[4]:
+            st.markdown(TACTICS_CONTENT)
     
-    # Additional sections
-    with st.expander("💪 Complete Football Fitness Guide"):
-        st.markdown(FITNESS_CONTENT)
+    else:  # 7v7 format
+        st.markdown("## 🌱 7v7 Turf Football Guide")
+        st.markdown("""
+        <div style="background: rgba(5, 150, 105, 0.1); padding: 20px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #10b981;">
+            <h4 style="color: #10b981; margin-top: 0;">Modern 7v7 Formation</h4>
+            <p><strong>Team Size:</strong> 7 players (1 GK + 6 outfield)</p>
+            <p><strong>Field Size:</strong> 50-70 yards long, 30-50 yards wide</p>
+            <p><strong>Popular Formations:</strong> 1-2-2-2, 1-2-3-1, 1-3-2-1</p>
+            <p><strong>Match Duration:</strong> 60 minutes (2x 30 min halves)</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # 7v7 specific content
+        turf_tabs = st.tabs(["🥅 7v7 Goalkeeper", "🛡️ 7v7 Defense", "⚡ 7v7 Midfield", "🔥 7v7 Attack", "📋 7v7 Tactics"])
+        
+        with turf_tabs[0]:
+            st.markdown("""
+            ## 🥅 7v7 Goalkeeper Guide
+            
+            ### Key Differences from 11v11:
+            - **Smaller Goal**: Usually 16ft x 7ft vs 24ft x 8ft
+            - **More Action**: Constant involvement due to smaller field
+            - **Quick Distribution**: Fast transitions are crucial
+            - **Sweeper Role**: Often acts as extra defender
+            
+            ### Essential Skills:
+            ✅ **Quick Reflexes** - Shots come faster and closer  
+            ✅ **Distribution** - Accurate throws and kicks to start attacks  
+            ✅ **Positioning** - Narrow angles, stay alert for through balls  
+            ✅ **Communication** - Direct your defense constantly  
+            
+            ### 7v7 Goalkeeper Tips:
+            🎯 Stay on your toes - quick reactions needed  
+            🎯 Use hands for distribution when possible  
+            🎯 Come off line to support defense  
+            🎯 Practice throwing to wide players
+            """)
+        
+        with turf_tabs[1]:
+            st.markdown("""
+            ## 🛡️ 7v7 Defense Guide
+            
+            ### Formation Options:
+            - **2 Defenders**: Traditional back line
+            - **3 Defenders**: Extra security with wing-backs
+            - **1 Sweeper + 1 Marker**: Continental style
+            
+            ### Key Responsibilities:
+            ✅ **Compact Defense** - Stay close together, minimal gaps  
+            ✅ **Quick Transitions** - From defense to attack instantly  
+            ✅ **Pressing** - Higher pressure due to smaller space  
+            ✅ **Communication** - Organize your compact team  
+            
+            ### 7v7 Defensive Tips:
+            🛡️ Always have one player covering  
+            🛡️ Force play to the sides  
+            🛡️ Win the ball and look forward immediately  
+            🛡️ Use the shorter field to your advantage
+            """)
+        
+        with turf_tabs[2]:
+            st.markdown("""
+            ## ⚡ 7v7 Midfield Guide
+            
+            ### The Engine Room:
+            In 7v7, midfielders are the most important players - they must:
+            - **Box-to-Box Play**: Defend and attack constantly
+            - **Quick Passing**: Keep possession in tight spaces
+            - **Transition Play**: Speed up or slow down the game
+            
+            ### Essential Skills:
+            ✅ **First Touch** - Crucial in tight spaces  
+            ✅ **Vision** - Find the killer pass quickly  
+            ✅ **Stamina** - Cover more ground per player  
+            ✅ **Pressing** - High energy defensive work  
+            
+            ### 7v7 Midfield Tips:
+            ⚡ Always show for the ball  
+            ⚡ Play one or two touch when under pressure  
+            ⚡ Switch play to create space  
+            ⚡ Track runners from deep
+            """)
+        
+        with turf_tabs[3]:
+            st.markdown("""
+            ## 🔥 7v7 Attack Guide
+            
+            ### Attacking Philosophy:
+            - **Quick Combinations**: 1-2 passes in tight areas
+            - **Width**: Use the full width of the smaller field
+            - **Pace**: Speed of thought over speed of foot
+            - **Finishing**: Every chance counts more
+            
+            ### Forward Roles:
+            ✅ **Target Player** - Hold up play and bring others in  
+            ✅ **Pace Merchant** - Run in behind the defense  
+            ✅ **Playmaker** - Drop deep and create chances  
+            ✅ **Finisher** - Clinical in front of goal  
+            
+            ### 7v7 Attacking Tips:
+            🔥 Make quick runs off the ball  
+            🔥 Use the smaller goal to your advantage  
+            🔥 Create overloads in wide areas  
+            🔥 Be ready for rebounds and loose balls
+            """)
+        
+        with turf_tabs[4]:
+            st.markdown("""
+            ## 📋 7v7 Tactical Guide
+            
+            ### Popular 7v7 Formations:
+            
+            #### 🔹 1-2-2-2 (Balanced)
+            - **Best for**: Balanced teams
+            - **Strengths**: Equal attack/defense
+            - **Weaknesses**: Can be outnumbered in midfield
+            
+            #### 🔹 1-2-3-1 (Midfield Control)
+            - **Best for**: Technical teams
+            - **Strengths**: Dominates possession
+            - **Weaknesses**: Less direct attacking threat
+            
+            #### 🔹 1-3-2-1 (Defensive)
+            - **Best for**: Counter-attacking
+            - **Strengths**: Solid defensively
+            - **Weaknesses**: Limited creative options
+            
+            ### Key Tactical Principles:
+            📋 **Compactness** - Keep players close together  
+            📋 **Quick Transitions** - Switch between attack/defense rapidly  
+            📋 **Overloads** - Create numerical advantages in key areas  
+            📋 **Pressing** - Win the ball back quickly  
+            
+            ### Game Management:
+            ⏱️ **Early Goals**: Try to score first  
+            ⏱️ **Tempo Control**: Speed up when ahead, slow down when behind  
+            ⏱️ **Substitutions**: Fresh legs are crucial  
+            ⏱️ **Set Pieces**: Every corner/free kick is valuable
+            """)
     
-    with st.expander("🧠 Football Philosophy & Styles"):
-        st.markdown(PHILOSOPHY_CONTENT)
+    # Additional sections (available for both formats)
+    st.markdown("---")
+    st.markdown("### 💪 Additional Resources")
+    
+    resource_col1, resource_col2 = st.columns(2)
+    
+    with resource_col1:
+        with st.expander("💪 Complete Football Fitness Guide"):
+            st.markdown(FITNESS_CONTENT)
+    
+    with resource_col2:
+        with st.expander("🧠 Football Philosophy & Styles"):
+            st.markdown(PHILOSOPHY_CONTENT)
 
 # Footer
 st.markdown("---")
