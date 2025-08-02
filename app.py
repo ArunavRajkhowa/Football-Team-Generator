@@ -519,13 +519,13 @@ if st.session_state.show_team_gen:
     
     # Player input section with enhanced UI
     st.markdown("### Add Players")
-    st.markdown('<p style="color: #7fafdf; font-size: 14px; margin-bottom: 15px;">Fill in player details below and press Enter to add them to your team</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #7fafdf; font-size: 14px; margin-bottom: 15px;">Fill in player details below and click "Add Player" to add them to your team</p>', unsafe_allow_html=True)
     
     col1, col2, col3, col4 = st.columns([3, 1, 1, 1])
     
     with col1:
         st.markdown('<p style="color: #a0a0a0; font-size: 12px; margin-bottom: 2px;">👤 Player Name</p>', unsafe_allow_html=True)
-        player_name = st.text_input("Player Name", placeholder="Enter player's full name", key="player_name_input", label_visibility="collapsed")
+        player_name = st.text_input("Player Name", placeholder="Enter player's full name", label_visibility="collapsed")
     
     with col2:
         st.markdown('<p style="color: #a0a0a0; font-size: 12px; margin-bottom: 2px;">🎂 Age Range</p>', unsafe_allow_html=True)
@@ -541,18 +541,17 @@ if st.session_state.show_team_gen:
         skill = st.selectbox("Skill", ["NA"] + list(range(1, 11)), key="skill_select", label_visibility="collapsed",
                            help="Rate player skill from 1 (beginner) to 10 (professional), or NA if unknown")
     
-    # Add player on Enter key
-    if player_name and st.session_state.get('player_name_input'):
-        st.session_state.temp_players.append({
-            'name': player_name,
-            'age_bracket': age_bracket,
-            'position': position,
-            'skill': skill
-        })
-        st.success(f"Added {player_name}")
-        # Clear the input
-        st.session_state.player_name_input = ""
-        st.rerun()
+    # Add player button
+    if st.button("➕ Add Player", type="primary", use_container_width=True):
+        if player_name:
+            st.session_state.temp_players.append({
+                'name': player_name,
+                'age_bracket': age_bracket,
+                'position': position,
+                'skill': skill
+            })
+            st.success(f"Added {player_name}")
+            st.rerun()
     
     # Initialize with sample players if empty - St Xavier's School Aug 2nd'25 Teams
     if not st.session_state.temp_players:
