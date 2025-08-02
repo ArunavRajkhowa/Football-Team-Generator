@@ -3,8 +3,6 @@ import pandas as pd
 import random
 from datetime import datetime
 from football_team_manager import FootballManager, Player, Position, PlayerStatus
-from simple_team_generator import SimplePlayer, SimpleTeamGenerator, Position as SimplePosition
-from football_personality import FootballPersonality
 
 # Football quotes for daily inspiration
 FOOTBALL_QUOTES = [
@@ -223,50 +221,20 @@ st.markdown("""
         transform: translateY(-2px);
         box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
     }
-    
-    /* Personality message */
-    .personality-message {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 1.5rem;
-        border-radius: 12px;
-        text-align: center;
-        margin: 1rem 0;
-        font-size: 1.1rem;
-    }
-    
-    /* Welcome card */
-    .welcome-card {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-        padding: 2rem;
-        border-radius: 15px;
-        text-align: center;
-        margin: 2rem 0;
-    }
 </style>
 """, unsafe_allow_html=True)
 
-# Initialize session states and services
+# Initialize session states
 if 'manager' not in st.session_state:
     st.session_state.manager = FootballManager()
-if 'personality' not in st.session_state:
-    st.session_state.personality = FootballPersonality()
 if 'show_advanced' not in st.session_state:
     st.session_state.show_advanced = False
 if 'daily_quote' not in st.session_state:
     # Get a quote based on the day
     day_index = datetime.now().day % len(FOOTBALL_QUOTES)
     st.session_state.daily_quote = FOOTBALL_QUOTES[day_index]
-if 'show_add_player' not in st.session_state:
-    st.session_state.show_add_player = False
-if 'show_import' not in st.session_state:
-    st.session_state.show_import = False
-if 'show_teams' not in st.session_state:
-    st.session_state.show_teams = False
 
 manager = st.session_state.manager
-personality = st.session_state.personality
 
 # Hero Section
 st.markdown("""
@@ -275,10 +243,6 @@ st.markdown("""
     <p class="hero-subtitle">Where every player gets their moment to shine</p>
 </div>
 """, unsafe_allow_html=True)
-
-# Welcome message based on time
-welcome_msg = personality.get_welcome_message()
-st.markdown(f"<div class='personality-message'>{welcome_msg}</div>", unsafe_allow_html=True)
 
 # Daily Quote
 st.markdown(f"""
@@ -329,11 +293,6 @@ if manager.players:
             <p class="fun-stat-label">Games Played</p>
         </div>
         """, unsafe_allow_html=True)
-    
-    # Squad personality
-    squad_data = [{'age': p.age, 'position': p.primary_position.value} for p in manager.players]
-    squad_personality = personality.get_squad_personality(squad_data)
-    st.markdown(f"<div class='personality-message'>🎯 {squad_personality}</div>", unsafe_allow_html=True)
 
 # Main Action Section
 st.markdown("### 🎯 Quick Actions")
@@ -342,31 +301,19 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
     if st.button("➕ Add Player", use_container_width=True):
-        st.session_state.show_add_player = not st.session_state.show_add_player
-        st.session_state.show_import = False
-        st.session_state.show_teams = False
+        st.session_state.show_add_player = True
 
 with col2:
     if st.button("📋 Import Squad", use_container_width=True):
-        st.session_state.show_import = not st.session_state.show_import
-        st.session_state.show_add_player = False
-        st.session_state.show_teams = False
+        st.session_state.show_import = True
 
 with col3:
     if manager.players and len(manager.players) >= 14:
         if st.button("⚡ Generate Teams", use_container_width=True, type="primary"):
             st.session_state.show_teams = True
-            st.session_state.show_add_player = False
-            st.session_state.show_import = False
-    else:
-        st.button(f"⚡ Need {14 - len(manager.players)} more players", disabled=True, use_container_width=True)
-
-# Random tip
-tip = personality.get_random_tip()
-st.info(tip)
 
 # Add Player Section (Simplified)
-if st.session_state.show_add_player:
+if 'show_add_player' in st.session_state and st.session_state.show_add_player:
     st.markdown("### 🆕 Add New Player")
     
     with st.form("quick_add_player", clear_on_submit=True):
@@ -416,16 +363,12 @@ if st.session_state.show_add_player:
                 consistency=7
             )
             manager.add_player(new_player)
-            
-            # Personalized welcome message
-            welcome = personality.get_player_welcome(name, age, position)
-            st.success(welcome)
-            
+            st.success(f"✅ {name} joined the squad!")
             st.session_state.show_add_player = False
             st.rerun()
 
 # Import Section (Simplified)
-if st.session_state.show_import:
+if 'show_import' in st.session_state and st.session_state.show_import:
     st.markdown("### 📁 Import Your Squad")
     
     col1, col2 = st.columns([2, 1])
@@ -448,9 +391,9 @@ if st.session_state.show_import:
                     
                     for _, row in df.iterrows():
                         # Simple parsing - just need name, age, position
-                        name = str(row.iloc[0]).strip() if len(row) > 0 else "Unknown"
-                        age = int(row.iloc[1]) if len(row) > 1 and pd.notna(row.iloc[1]) else 25
-                        pos_str = str(row.iloc[2]).upper() if len(row) > 2 and pd.notna(row.iloc[2]) else 'MID'
+                        name = str(row.iloc[0]).strip()
+                        age = int(row.iloc[1]) if len(row) > 1 else 25
+                        pos_str = str(row.iloc[2]).upper() if len(row) > 2 else 'MID'
                         
                         # Map position
                         if 'GK' in pos_str or 'GOAL' in pos_str:
@@ -476,7 +419,6 @@ if st.session_state.show_import:
                         manager.add_player(player)
                     
                     st.success(f"✅ Imported {len(manager.players)} players!")
-                    st.balloons()
                     st.session_state.show_import = False
                     st.rerun()
                     
@@ -509,119 +451,82 @@ if manager.players:
             for i, player in enumerate(players_in_pos):
                 with cols[i % 3]:
                     age_emoji = "🌟" if player.age < 23 else "⚡" if player.age < 30 else "👑"
-                    nickname = personality.generate_player_nickname(player.name, pos, player.age)
                     st.markdown(f"""
                     <div class="player-card-new">
-                        <strong>{player.name}</strong> {age_emoji}<br>
-                        <small style="color: #7f8c8d;">{nickname}</small>
+                        <strong>{player.name}</strong> {age_emoji}
                         <span class="position-badge badge-{pos.lower()}">{player.age} yrs</span>
                     </div>
                     """, unsafe_allow_html=True)
 
 # Team Generation Display
-if st.session_state.show_teams and manager.players and len(manager.players) >= 14:
+if 'show_teams' in st.session_state and st.session_state.show_teams:
     st.markdown("---")
     st.markdown("### ⚡ This Week's Teams")
     
     try:
-        # Use simple team generator for better balance
-        simple_players = [
-            SimplePlayer(
-                name=p.name,
-                age=p.age,
-                position=SimplePosition(p.primary_position.value)
-            ) for p in manager.players
-        ]
+        team, details = manager.generate_weekly_team()
         
-        generator = SimpleTeamGenerator(simple_players)
-        team_a, team_b = generator.generate_balanced_teams()
-        
-        # Pre-match motivation
-        pre_match = random.choice(personality.motivational_messages['pre_match'])
-        st.markdown(f"<div class='personality-message'>🎯 {pre_match}</div>", unsafe_allow_html=True)
+        # Split into two teams
+        team_a = team[:7]
+        team_b = team[7:14] if len(team) >= 14 else []
         
         col1, col2 = st.columns(2)
         
         with col1:
-            stats_a = generator.get_fun_stats(team_a)
-            st.markdown(f"""
+            st.markdown("""
             <div class="team-display">
-                <h3 style="text-align: center; margin-bottom: 1rem;">🔴 {stats_a['nickname'].upper()}</h3>
+                <h3 style="text-align: center; margin-bottom: 1rem;">🔴 RED TEAM</h3>
             </div>
             """, unsafe_allow_html=True)
             
             for player in team_a:
                 pos_emoji = {"GK": "🥅", "DEF": "🛡️", "MID": "⚽", "FWD": "⚡"}
-                st.markdown(f"{pos_emoji.get(player.position.value, '⚽')} **{player.name}** ({player.age})")
-            
-            # Team stats
-            st.caption(f"Average age: {stats_a['average_age']} | Formation: {stats_a['formation']}")
+                st.markdown(f"{pos_emoji.get(player.primary_position.value, '⚽')} **{player.name}** ({player.age})")
         
         with col2:
-            stats_b = generator.get_fun_stats(team_b)
-            st.markdown(f"""
+            st.markdown("""
             <div class="team-display">
-                <h3 style="text-align: center; margin-bottom: 1rem;">🔵 {stats_b['nickname'].upper()}</h3>
+                <h3 style="text-align: center; margin-bottom: 1rem;">🔵 BLUE TEAM</h3>
             </div>
             """, unsafe_allow_html=True)
             
             for player in team_b:
                 pos_emoji = {"GK": "🥅", "DEF": "🛡️", "MID": "⚽", "FWD": "⚡"}
-                st.markdown(f"{pos_emoji.get(player.position.value, '⚽')} **{player.name}** ({player.age})")
-            
-            # Team stats
-            st.caption(f"Average age: {stats_b['average_age']} | Formation: {stats_b['formation']}")
-        
-        # Team ready message
-        team_ready = random.choice(personality.motivational_messages['team_ready'])
-        st.markdown(f"<div class='personality-message'>⚽ {team_ready}</div>", unsafe_allow_html=True)
+                st.markdown(f"{pos_emoji.get(player.primary_position.value, '⚽')} **{player.name}** ({player.age})")
         
         # Fun team facts
-        st.markdown("### 🎉 Match Day Facts")
+        st.markdown("### 🎉 Fun Facts")
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            st.info(f"👶 Youngest: {stats_a['youngest'].name} ({stats_a['youngest'].age}) vs {stats_b['youngest'].name} ({stats_b['youngest'].age})")
+            youngest = min(team, key=lambda p: p.age)
+            st.info(f"👶 Youngest: {youngest.name} ({youngest.age})")
         
         with col2:
-            st.info(f"👴 Veterans: {stats_a['oldest'].name} ({stats_a['oldest'].age}) vs {stats_b['oldest'].name} ({stats_b['oldest'].age})")
+            oldest = max(team, key=lambda p: p.age)
+            st.info(f"👴 Most Experienced: {oldest.name} ({oldest.age})")
         
         with col3:
-            age_diff = abs(stats_a['average_age'] - stats_b['average_age'])
-            st.info(f"⚖️ Age balance: {age_diff:.1f} years difference")
-        
-        # Action buttons
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("🔄 Regenerate Teams", use_container_width=True):
-                st.rerun()
-        with col2:
-            if st.button("💾 Save These Teams", use_container_width=True):
-                st.success("Teams saved! Good luck in your match! 🏆")
+            avg_age_team = sum(p.age for p in team) / len(team)
+            st.info(f"📊 Average Age: {avg_age_team:.1f} years")
             
     except Exception as e:
-        st.error(f"Need at least 14 players to make two teams! Currently have {len(manager.players)}")
+        st.error("Need at least 14 players to make two teams!")
 
 else:
     # Welcome message for new users
     if not manager.players:
         st.markdown("""
-        <div class="welcome-card">
-            <h3>👋 Welcome to Weekend Squad!</h3>
-            <p style="font-size: 1.1rem; margin: 1rem 0;">
-                Ready to organize your next football match? Let's get started!
-            </p>
-            <div style="text-align: left; display: inline-block; margin: 1rem 0;">
-                <p>✅ Add your players - Just name, age, and position</p>
-                <p>✅ Generate balanced teams automatically</p>
-                <p>✅ Get motivated with daily football quotes</p>
-                <p>✅ Track your weekend football journey</p>
-            </div>
-            <p style="font-size: 1.2rem; margin-top: 1rem;">
-                No complicated stats. Just pure football fun! ⚽
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+        ### 👋 Welcome to Weekend Squad!
+        
+        Ready to organize your next football match? Let's get started:
+        
+        1. **Add your players** - Just need their name, age, and position
+        2. **Generate teams** - We'll create balanced squads automatically
+        3. **Play football!** - Enjoy your weekend match
+        
+        No complicated stats, no complex forms. Just pure football fun! ⚽
+        """)
 
 # Footer with motivation
 st.markdown("---")
