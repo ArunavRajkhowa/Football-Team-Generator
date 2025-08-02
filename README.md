@@ -1,110 +1,144 @@
-# ⚽ Football Team Generator - Free Web App
+# ⚽ Weekend Football Squad
 
-Generate balanced 7v7 teams from your player pool with smart weightings!
+A personal, engaging football team generator that makes organizing weekend matches fun and fair!
 
-## 🚀 Quick Start
+## 🚀 Live App
 
-1. **Upload your player data** (CSV or Excel file)
-2. **Click "Generate Teams"** 
-3. **Share the link** in your WhatsApp group!
+**Use it now:** [https://football-team-generator-lachitfc.streamlit.app/](https://football-team-generator-lachitfc.streamlit.app/)
 
-## 📊 Player Data Format
+## ✨ Features
 
-Your CSV/Excel file should have these columns:
-- **Name**: Player name
-- **Age**: Age (big factor in team balance)
-- **Position**: GK, DEF, MID, FWD
-- **Skill**: 1-10 rating for their position
-- **Fitness**: 1-10 fitness level
+- 🎯 **Daily Football Quotes** - Get inspired by legends like Pelé, Messi, and Cruyff
+- 👥 **Simple Player Management** - Just name, age, and position needed
+- ⚖️ **Smart Team Generation** - Balanced teams based on age and position
+- 🎭 **Player Personalities** - Auto-generated fun nicknames and squad analysis
+- 📱 **Mobile Friendly** - Works perfectly on phones for WhatsApp groups
+- 🎉 **Fun First** - Focus on enjoyment rather than complex statistics
 
-### Sample Data
-```
-Name,Age,Position,Skill,Fitness
-Alex Thompson,26,GK,8,9
-James Rodriguez,28,DEF,7,8
-Lucas Silva,26,MID,9,8
-Sergio Martinez,23,FWD,9,8
-```
+## 🏃 How to Run Locally
 
-## 🏗️ How to Host for FREE
+### Option 1: Quick Start (Recommended)
+```bash
+# Clone the repository
+git clone https://github.com/ArunavRajkhowa/Football-Team-Generator.git
+cd Football-Team-Generator
 
-### Option 1: GitHub Pages (Recommended)
+# Install dependencies
+pip install -r requirements.txt
 
-1. **Create GitHub account** (free): github.com
-2. **Create new repository** called "football-teams"
-3. **Upload files**:
-   - `index.html`
-   - `players_data.csv` (your sample data)
-4. **Enable Pages**: Settings > Pages > Source: "Deploy from branch" > main
-5. **Your link**: `https://yourusername.github.io/football-teams`
-
-### Option 2: Netlify (Super Easy)
-
-1. **Go to**: netlify.com
-2. **Drag & drop** the `index.html` file
-3. **Get instant link**: `https://random-name.netlify.app`
-4. **Share in WhatsApp group!**
-
-### Option 3: Vercel
-
-1. **Go to**: vercel.com
-2. **Import** your files
-3. **Deploy** with one click
-4. **Get link**: `https://football-teams.vercel.app`
-
-## 💡 Smart Team Generation
-
-The system uses weighted metrics:
-- **Age & Fitness**: 40% combined (peak age 24-28)
-- **Skill Level**: 60% (1-10 rating for position)
-- **Balanced Distribution**: Snake draft ensures fair teams
-
-## 📱 WhatsApp Sharing
-
-Once hosted, share like this:
-```
-⚽ Generate our weekly teams here:
-https://yourusername.github.io/football-teams
-
-Just upload our player Excel file and click generate!
+# Run the app
+streamlit run app.py
 ```
 
-## 🔧 Customization
+### Option 2: Using Virtual Environment (Recommended for development)
+```bash
+# Clone the repository
+git clone https://github.com/ArunavRajkhowa/Football-Team-Generator.git
+cd Football-Team-Generator
 
-### Easy Changes:
-- **Formation**: Currently 1 GK, 2 DEF, 3 MID, 1 FWD
-- **Age Weights**: Peak performance ages
-- **Team Names**: Currently "Team A" and "Team B"
+# Create virtual environment
+python -m venv venv
 
-### Edit the HTML file to customize:
-- Line 400+: Change formation numbers
-- Line 350+: Adjust age weights
-- Line 100+: Change team names/colors
+# Activate virtual environment
+# On Windows:
+venv\Scripts\activate
+# On Mac/Linux:
+source venv/bin/activate
 
-## 📋 Excel Integration
+# Install dependencies
+pip install -r requirements.txt
 
-1. **Create/Edit** your `players_data.csv` file
-2. **Upload** via the web interface
-3. **Generate teams** instantly
-4. **Anyone can edit** the Excel and re-upload
+# Run the app
+streamlit run app.py
+```
 
-## 🎯 Features
+The app will open in your browser at `http://localhost:8501`
 
-✅ **Two balanced teams** (7v7 each)  
-✅ **Smart player ratings** (age + fitness + skill)  
-✅ **Position-based selection**  
-✅ **Mobile-friendly** interface  
-✅ **Excel/CSV support**  
-✅ **Instant sharing** via WhatsApp  
-✅ **No database needed**  
-✅ **100% free hosting**  
+## 📁 Project Structure
 
-## 🔄 Weekly Usage
+```
+Football-Team-Generator/
+├── app.py                      # Main Streamlit application
+├── football_team_manager.py    # Core team management logic
+├── football_personality.py     # Personality and motivational features
+├── simple_team_generator.py    # Simplified team generation algorithm
+├── requirements.txt            # Python dependencies
+└── README.md                  # This file
+```
 
-1. **Team manager** updates Excel with any changes
-2. **Upload** updated file to web app
-3. **Generate** new teams
-4. **Share** teams in group chat
-5. **Play football!** ⚽
+## 🎯 How to Use
 
-Perfect for weekend leagues, office teams, or friend groups! 
+1. **Add Players** - Click "Add Player" and enter name, age, and position
+2. **Import Squad** - Upload a CSV with your team (Name, Age, Position format)
+3. **Generate Teams** - Hit the big button once you have 14+ players
+4. **Share & Play** - Copy teams to WhatsApp and enjoy your match!
+
+## 📊 CSV Import Format
+
+Your CSV file should have these columns:
+```csv
+Name,Age,Position
+John Smith,25,GK
+Mike Johnson,28,DEF
+Tom Wilson,23,MID
+Sam Roberts,26,FWD
+```
+
+**Positions:** Use GK (Goalkeeper), DEF (Defender), MID (Midfielder), FWD (Forward)
+
+## 🌟 What Makes This Special
+
+- **Personal Touch** - Every action has a personalized, motivational response
+- **Time-Based Greetings** - Different welcome messages for morning/afternoon/evening
+- **Squad Personality** - Your team gets analyzed and given a unique personality
+- **Fun Team Names** - Teams get nicknames like "Young Guns" or "The Veterans"
+- **Match Day Facts** - Interesting comparisons between the generated teams
+- **Daily Motivation** - Random football tips and quotes to keep you inspired
+
+## 🔧 Dependencies
+
+- `streamlit` - Web app framework
+- `pandas` - Data manipulation
+- `openpyxl` - Excel file support
+- `xlrd` - Additional Excel support
+
+## 🚀 Deploy Your Own
+
+### Deploy to Streamlit Cloud (Free)
+1. Fork this repository
+2. Go to [share.streamlit.io](https://share.streamlit.io)
+3. Connect your GitHub account
+4. Select your forked repository
+5. Set main file as `app.py`
+6. Deploy!
+
+### Deploy to Heroku
+1. Fork this repository
+2. Create a new Heroku app
+3. Connect your GitHub repository
+4. Deploy from the main branch
+
+## 🎮 Perfect For
+
+- Weekend football leagues
+- Office team matches
+- Friend group games
+- Youth team organization
+- Casual pickup games
+- WhatsApp football groups
+
+## 💝 Philosophy
+
+This app is built for people who love football for the pure joy of playing. No complex statistics, no overwhelming features - just balanced teams and good vibes. Every weekend warrior deserves fair, fun matches with their friends!
+
+## 🤝 Contributing
+
+Feel free to fork, improve, and submit pull requests! This project is all about making weekend football more enjoyable for everyone.
+
+## 📄 License
+
+Open source and free to use for all football enthusiasts!
+
+---
+
+**Made with ❤️ for weekend warriors everywhere** ⚽
