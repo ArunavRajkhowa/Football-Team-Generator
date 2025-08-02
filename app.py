@@ -85,29 +85,34 @@ st.markdown("""
         z-index: 1;
     }
     
-    /* Quote card */
-    .quote-card {
-        background: white;
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        margin: 2rem 0;
-        border-left: 5px solid #ff6b6b;
-        position: relative;
+    /* Sliding Quote Banner */
+    .quote-slider {
+        background: linear-gradient(90deg, #f8f9fa, #e9ecef);
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 1rem 0;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     
-    .quote-text {
-        font-size: 1.3rem;
+    .quote-content {
+        animation: slideLeft 30s linear infinite;
+        white-space: nowrap;
+        color: #495057;
+        font-size: 0.95rem;
         font-style: italic;
-        color: #2c3e50;
-        margin-bottom: 1rem;
-        line-height: 1.6;
+        padding-left: 100%;
     }
     
-    .quote-author {
-        text-align: right;
-        color: #7f8c8d;
-        font-weight: 500;
+    @keyframes slideLeft {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+    }
+    
+    .quote-slider:hover .quote-content {
+        animation-play-state: paused;
     }
     
     /* Player card redesign */
@@ -276,15 +281,16 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Welcome message based on time
+# Welcome message based on time (more subtle)
 welcome_msg = personality.get_welcome_message()
-st.markdown(f"<div class='personality-message'>{welcome_msg}</div>", unsafe_allow_html=True)
+st.markdown(f"<div style='text-align: center; color: #666; padding: 0.5rem; font-size: 0.9rem;'>{welcome_msg}</div>", unsafe_allow_html=True)
 
-# Daily Quote
+# Sliding Quote Banner
 st.markdown(f"""
-<div class="quote-card">
-    <div class="quote-text">"{st.session_state.daily_quote['quote']}"</div>
-    <div class="quote-author">- {st.session_state.daily_quote['author']}</div>
+<div class="quote-slider">
+    <div class="quote-content">
+        💬 "{st.session_state.daily_quote['quote']}" - {st.session_state.daily_quote['author']}
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -330,10 +336,10 @@ if manager.players:
         </div>
         """, unsafe_allow_html=True)
     
-    # Squad personality
+    # Squad personality (subtle)
     squad_data = [{'age': p.age, 'position': p.primary_position.value} for p in manager.players]
     squad_personality = personality.get_squad_personality(squad_data)
-    st.markdown(f"<div class='personality-message'>🎯 {squad_personality}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='text-align: center; color: #666; font-size: 0.9rem; padding: 0.5rem; font-style: italic;'>🎯 {squad_personality}</div>", unsafe_allow_html=True)
 
 # Main Action Section
 st.markdown("### 🎯 Quick Actions")
@@ -536,9 +542,9 @@ if st.session_state.show_teams and manager.players and len(manager.players) >= 1
         generator = SimpleTeamGenerator(simple_players)
         team_a, team_b = generator.generate_balanced_teams()
         
-        # Pre-match motivation
+        # Pre-match message (subtle)
         pre_match = random.choice(personality.motivational_messages['pre_match'])
-        st.markdown(f"<div class='personality-message'>🎯 {pre_match}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='text-align: center; color: #666; font-size: 0.9rem; padding: 0.5rem;'>🎯 {pre_match}</div>", unsafe_allow_html=True)
         
         col1, col2 = st.columns(2)
         
@@ -572,9 +578,9 @@ if st.session_state.show_teams and manager.players and len(manager.players) >= 1
             # Team stats
             st.caption(f"Average age: {stats_b['average_age']} | Formation: {stats_b['formation']}")
         
-        # Team ready message
+        # Team ready message (subtle)
         team_ready = random.choice(personality.motivational_messages['team_ready'])
-        st.markdown(f"<div class='personality-message'>⚽ {team_ready}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='text-align: center; color: #666; font-size: 0.9rem; padding: 0.5rem;'>⚽ {team_ready}</div>", unsafe_allow_html=True)
         
         # Fun team facts
         st.markdown("### 🎉 Match Day Facts")

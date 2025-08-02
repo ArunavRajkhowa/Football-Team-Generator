@@ -12,27 +12,27 @@ class FootballPersonality:
         self.motivational_messages = {
             'pre_match': [
                 "Time to lace up those boots! ⚽",
-                "Another weekend, another chance for glory!",
-                "The pitch is calling, warriors!",
-                "Let's create some magic today!",
-                "Weekend football - where legends are made!",
-                "Ready to write another chapter?",
+                "Another weekend, another game!",
+                "The pitch is calling!",
+                "Let's have some fun today!",
+                "Weekend football time!",
+                "Ready for kick-off?",
                 "The beautiful game awaits!",
-                "Time to show what you're made of!",
-                "Let's make this one memorable!",
-                "Football weather is the best weather!"
+                "Time to play some football!",
+                "Should be a good match!",
+                "Perfect day for football!"
             ],
             'team_ready': [
-                "Teams are set! May the best squad win!",
-                "Perfectly balanced, as all things should be!",
-                "These lineups look 🔥!",
-                "Two great teams, one epic match ahead!",
-                "The stage is set for a classic!",
-                "Chemistry looks good on both sides!",
-                "This is going to be a close one!",
-                "Both teams looking strong today!",
-                "Let the games begin!",
-                "Fair teams, now let's see who wants it more!"
+                "Teams are set! Should be fun!",
+                "Nicely balanced teams!",
+                "Good lineups on both sides!",
+                "Teams look even - should be close!",
+                "Fair split, let's play!",
+                "Both sides look good!",
+                "Teams are ready!",
+                "Even match-up today!",
+                "Let's kick off!",
+                "Good teams, good game ahead!"
             ],
             'player_joined': [
                 "{name} is ready to dominate!",
@@ -119,27 +119,27 @@ class FootballPersonality:
         
         if hour < 12:
             greetings = [
-                "Good morning, football fans! ☀️",
-                "Rise and shine - it's match day! ⚽",
-                "Morning warriors, ready for battle?",
-                "Early kick-off energy! Let's go!",
-                "Coffee ☕ and football - perfect morning!"
+                "Good morning! ☀️",
+                "Morning kick-off time! ⚽",
+                "Ready for some football?",
+                "Early game today!",
+                "Coffee ☕ and football!"
             ]
         elif hour < 17:
             greetings = [
-                "Afternoon football is the best football! 🌞",
-                "Perfect time for a match!",
-                "Lunch is done, time for football!",
-                "Afternoon delight on the pitch!",
-                "The day is young, let's play!"
+                "Good afternoon! 🌞",
+                "Perfect time for football!",
+                "Ready for a match?",
+                "Afternoon football time!",
+                "Let's get this started!"
             ]
         else:
             greetings = [
-                "Evening football under the lights! ✨",
-                "Time for some after-work magic!",
-                "Evening warriors, assemble!",
-                "Floodlight football feels different!",
-                "End the day with beautiful football!"
+                "Good evening! ✨",
+                "Evening football time!",
+                "Ready to play?",
+                "After-work football!",
+                "Let's kick off!"
             ]
         
         return random.choice(greetings)
