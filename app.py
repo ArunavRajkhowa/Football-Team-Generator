@@ -450,8 +450,10 @@ if st.session_state.show_team_gen:
                 col1, col2 = st.columns([10, 1])
                 
                 with col1:
-                    player_display = f"**{player['name']}** | {player['age_bracket']} | {player['position']}"
-                    if player['skill'] != 'NA':
+                    # Handle both age_bracket (string) and age (int) formats
+                    age_info = player.get('age_bracket', player.get('age', 'Unknown'))
+                    player_display = f"**{player['name']}** | {age_info} | {player['position']}"
+                    if player.get('skill', 'NA') != 'NA':
                         player_display += f" | Skill: {player['skill']}"
                     st.markdown(player_display)
                 
